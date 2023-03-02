@@ -36,7 +36,10 @@ class arbolParidad(RNA):
         return hashlib.sha256((f"{self.salida}{self.getPesos()}").encode('UTF-8')).hexdigest()
     
     def getDatosIntermedios(self):
-        return self.capas[0].salidaPreActivacion
+        return self.capas[0].salida   
+    
+    def cambiaDatosIntermedios(self, nuevosDatos):
+        self.capas[0].salida = nuevosDatos
     
 class arbolParidadAtGeom(arbolParidad):
     def __init__(self, k, n , l, reglaA = reglaAprendizaje.AntiHebbian()):
