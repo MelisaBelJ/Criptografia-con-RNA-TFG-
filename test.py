@@ -78,7 +78,7 @@ class Test():
                 sincro = E.sincronizacionCon(self.A)
         if(imprime):
             print ('Sincronizadas en ' + str(tiempo)+ " segundos")    
-            print("La máquina externa más sincronizada, lo estun " + str(sincro) + " porciento ") 
+            print("La máquina externa más sincronizada, lo esta un " + str(sincro) + " porciento ") 
         return (sincro, tiempo, cont)
     
     def ataqueGenetico(self, N = 1, M = 10, imprime = True):
@@ -95,7 +95,14 @@ class Test():
                 for E in EsCopia:
                     if xA == E(X):
                         if N < M:
-                            E.propagacionHaciaAtras(xA)
+                            Es.remove(E)
+                            dI = E.getDatosIntermedios()
+                            for i in range(len(dI)):
+                                for j in range(len(dI)):
+                                    Eaux = E.copy()
+                                    Eaux.cambiaDatosIntermedios([(-1)^int(num == i)dI[num] for num in range(len(dI))])
+                                    Eaux.propagacionHaciaAtras(xA)
+                                    Es.append(aux)
                         else:
                             E.propagacionHaciaAtras(xA)                            
                     else:
@@ -109,7 +116,7 @@ class Test():
                 sincro = E.sincronizacionCon(self.A)
         if(imprime):
             print ('Sincronizadas en ' + str(tiempo)+ " segundos")    
-            print("La máquina externa más sincronizada, lo estun " + str(sincro) + " porciento ") 
+            print("La máquina externa más sincronizada, lo esta un " + str(sincro) + " porciento ") 
         return (sincro, tiempo, cont)
         
     def graficoSincronizacion(self):
