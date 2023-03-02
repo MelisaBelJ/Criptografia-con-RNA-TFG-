@@ -6,6 +6,11 @@ import hashlib
 
 class arbolParidad(RNA):
     def __init__(self, k, n , l, reglaA = reglaAprendizaje.AntiHebbian()):
+        inicializa(self, k, n , l, reglaA)
+        self.anadeCapa(CapaUnoUno(k, n, l))
+        self.anadeCapa(CapaMult(reglaA))
+        
+    def inicializa(self, k, n , l, reglaA):
         self.funCoste = Errores.Multiplicacion()
         self.funSalidaNorm = Funciones.Identidad().funcion
         self.capas = []
@@ -13,8 +18,6 @@ class arbolParidad(RNA):
         self.n = n
         self.l = l
         self.tasaAprendizaje = 0
-        self.anadeCapa(CapaUnoUno(k, n, l))
-        self.anadeCapa(CapaMult(reglaA))
         self.salida = 0
         
     def cambiaReglaAprendizaje(self, reglaA):
@@ -31,3 +34,9 @@ class arbolParidad(RNA):
     
     def hash_pesos(self):
         return hashlib.sha256((f"{self.salida}{self.getPesos()}").encode('UTF-8')).hexdigest()
+    
+class arbolParidadAtGeom(arbolParidad):
+    def __init__(self, k, n , l, reglaA = reglaAprendizaje.AntiHebbian()):
+        inicializa(self, k, n , l, reglaA)
+        self.anadeCapa(CapaUnoUnoAtGeom(k, n, l))
+        self.anadeCapa(CapaMult(reglaA))
