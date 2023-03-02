@@ -2,7 +2,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy
 from statistics import mean
-from arbolParidad import arbolParidad
+from arbolParidad import arbolParidad, arbolParidadAtGeom
 
 class Test():    
     def __init__(self, k, n, l):
@@ -55,6 +55,29 @@ class Test():
         if(imprime):
             print ('Sincronizadas en ' + str(tiempo)+ " segundos")    
             print("Maquina externa sincronizada un " + str(sincro) + " porciento ") 
+        return (sincro, tiempo, cont)
+    
+    def ataqueGeometrico(self, N = 1, imprime = True):
+        Es = []
+        for i in range(N):
+            Es.append(arbolParidadAtGeom(self.k, self.n, self.l))     
+        t_inicial = time.time()
+        self.historial = []
+        cont = 0
+        while(self.porcentajeSincro != 100):
+            X, xA, xB = self.coordinaSalidas()            
+            if xA == xB:
+                for E in Es:
+                    E.propagacionHaciaAtras(xA)
+            cont += 1
+        
+        tiempo, sincro = time.time() - t_inicial, 0
+        for E in Es:
+            if E.sincronizacionCon(self.A) >= sincro:
+                sincro = E.sincronizacionCon(self.A)
+        if(imprime):
+            print ('Sincronizadas en ' + str(tiempo)+ " segundos")    
+            print("La máquina externa más sincronizada, lo estun " + str(sincro) + " porciento ") 
         return (sincro, tiempo, cont)
         
     def graficoSincronizacion(self):
