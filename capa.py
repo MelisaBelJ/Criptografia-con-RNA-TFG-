@@ -84,17 +84,21 @@ class CapaMult(AbstractCapa):
 #Capa en la que se conecta cada neurona con una unica neurona de la siguiente capa, cada una diferente. Usa como funcion activacion la de paridad (para TPM)
 class CapaUnoUnoAtGeom(CapaUnoUno):
 
-    def propagacionHaciaAtras(self, errorSalida, tasaAprendizaje, coincide):
-    	if coincide:
-		for i in range(len(self.pesos)):
-		    for j in range(len(self.pesos[0])):
-		        self.pesos[i,j] = numpy.clip(self.pesos[i, j] + (errorSalida[i]*self.entrada[i,j]), -self.l, self.l)
-	else:
-		iMin, salMin = 0, self.salidaPreActivacion [0]
+    def propagacionHaciaAtras(self, errorSalida, tasaAprendizaje):
+	noCoincide, i = True, 0
+	while coincide and i< len(errorSalida):
+		noCoincide = errorSalida[i] == 0
+		i+=1
+    	if noCoincide:
 		for i in range(1, len(self.pesos)):
 			if salMin > self.salidaPreActivacion[i]:
 				iMin, salMin = i, self.salidaPreActivacion[i]
 		for j in range(len(self.pesos[0])):
 		        self.pesos[iMin,j] = numpy.clip(self.pesos[iMin, j] - (errorSalida[iMin]*self.entrada[iMin,j]), -self.l, self.l)
+	else:
+		for i in range(len(self.pesos)):
+		    for j in range(len(self.pesos[0])):
+		        self.pesos[i,j] = numpy.clip(self.pesos[i, j] + (errorSalida[i]*self.entrada[i,j]), -self.l, self.l)
+		iMin, salMin = 0, self.salidaPreActivacion [0]
 	return 0  
 		
