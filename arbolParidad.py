@@ -1,12 +1,12 @@
 from RNA import RNA
 import numpy
-from capa import CapaUnoUno, CapaMult
+from capa import CapaUnoUno, CapaMult, CapaUnoUnoAtGeom
 from funciones import reglaAprendizaje, Funciones, Errores
 import hashlib
 
 class arbolParidad(RNA):
     def __init__(self, k, n , l, reglaA = reglaAprendizaje.AntiHebbian()):
-        inicializa(self, k, n , l, reglaA)
+        self.inicializa(k, n , l, reglaA)
         self.anadeCapa(CapaUnoUno(k, n, l))
         self.anadeCapa(CapaMult(reglaA))
         
@@ -43,6 +43,6 @@ class arbolParidad(RNA):
     
 class arbolParidadAtGeom(arbolParidad):
     def __init__(self, k, n , l, reglaA = reglaAprendizaje.AntiHebbian()):
-        inicializa(self, k, n , l, reglaA)
+        self.inicializa(k, n , l, reglaA)
         self.anadeCapa(CapaUnoUnoAtGeom(k, n, l))
         self.anadeCapa(CapaMult(reglaA))

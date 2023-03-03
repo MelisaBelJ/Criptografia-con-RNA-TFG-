@@ -46,9 +46,9 @@ class CapaUnoUno(AbstractCapa):
     #devuelve sigma(xW) con x = entrada, W = pesos
     def propagacionHaciaDelante(self, entrada):
         self.entrada = entrada
-        self.salidaPreActivacion = self.entrada * self.pesos #xW
-        s = [1 if i == 0 else i for i in numpy.sign(numpy.sum(self.salidaPreActivacion, axis = 1))] #sigma(xW)
-        return s
+        self.salidaPreActivacion = numpy.sum(self.entrada * self.pesos, axis = 1) #xW
+        self.salida = [1 if i == 0 else i for i in numpy.sign(self.salidaPreActivacion)] #sigma(xW)
+        return self.salida
 
     def propagacionHaciaAtras(self, errorSalida, tasaAprendizaje):
         for i in range(len(self.pesos)):
@@ -85,20 +85,21 @@ class CapaMult(AbstractCapa):
 class CapaUnoUnoAtGeom(CapaUnoUno):
 
     def propagacionHaciaAtras(self, errorSalida, tasaAprendizaje):
-	noCoincide, i = True, 0
-	while coincide and i< len(errorSalida):
-		noCoincide = errorSalida[i] == 0
-		i+=1
-    	if noCoincide:
-		for i in range(1, len(self.pesos)):
-			if salMin > self.salidaPreActivacion[i]:
-				iMin, salMin = i, self.salidaPreActivacion[i]
-		for j in range(len(self.pesos[0])):
-		        self.pesos[iMin,j] = numpy.clip(self.pesos[iMin, j] - (errorSalida[iMin]*self.entrada[iMin,j]), -self.l, self.l)
-	else:
-		for i in range(len(self.pesos)):
-		    for j in range(len(self.pesos[0])):
-		        self.pesos[i,j] = numpy.clip(self.pesos[i, j] + (errorSalida[i]*self.entrada[i,j]), -self.l, self.l)
-		iMin, salMin = 0, self.salidaPreActivacion [0]
-	return 0  
-		
+        noCoincide, i = True, 0
+        while noCoincide and i< len(errorSalida):
+             noCoincide = errorSalida[i] == 0
+             i+=1
+        if noCoincide:
+            iMin, salMin = 0, self.salidaPreActivacion[0]
+            for i in range(1, len(self.pesos)):
+                if salMin > self.salidaPreActivacion[i]:
+                    iMin, salMin = i, self.salidaPreActivacion[i]
+            for j in range(len(self.pesos[0])):
+                self.pesos[iMin,j] = numpy.clip(self.pesos[iMin, j] - (errorSalida[iMin]*self.entrada[iMin,j]), -self.l, self.l)
+        else:
+              for i in range(len(self.pesos)):
+                  for j in range(len(self.pesos[0])):
+                      self.pesos[i,j] = numpy.clip(self.pesos[i, j] + (errorSalida[i]*self.entrada[i,j]), -self.l, self.l)
+              
+        return 0  
+              
