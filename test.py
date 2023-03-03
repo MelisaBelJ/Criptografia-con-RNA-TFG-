@@ -35,19 +35,17 @@ class Test():
         return X, xA, xB
         
      
-    def testBasico(self, imprime = True):
+    def testBasico(self):
         t_inicial = time.time() 
         self.historial = []
         cont = 0
         while(self.A.hash_pesos() != self.B.hash_pesos()):
             self.coordinaSalidas()
             cont += 1
-        tiempo = time.time() - t_inicial
-        if imprime:
-            print ('Sincronizadas en ' + str(tiempo)+ " segundos")  
-        return (tiempo, cont)
+            
+        return (time.time() - t_inicial, cont)
         
-    def fuerzaBruta(self, imprime = True):
+    def fuerzaBruta(self):
         E = arbolParidad(self.k, self.n, self.l)        
         t_inicial = time.time() 
         self.historial = []
@@ -58,13 +56,9 @@ class Test():
                 E.propagacionHaciaAtras(xA)
             cont += 1
         
-        tiempo, sincro = time.time() - t_inicial, E.sincronizacionCon(self.A)
-        if(imprime):
-            print ('Sincronizadas en ' + str(tiempo)+ " segundos")    
-            print("Maquina externa sincronizada un " + str(sincro) + " porciento ") 
-        return (sincro, tiempo, cont)
+        return (E.sincronizacionCon(self.A), time.time() - t_inicial, cont)
     
-    def ataqueGeometrico(self, imprime = True, N = 10):
+    def ataqueGeometrico(self, N = 10):
         Es = []
         for i in range(N):
             Es.append(arbolParidadAtGeom(self.k, self.n, self.l))     
@@ -79,16 +73,13 @@ class Test():
                     E.propagacionHaciaAtras(xA)
             cont += 1
         
-        tiempo, sincro = time.time() - t_inicial, 0
+        sincro = 0
         for E in Es:
-            if E.sincronizacionCon(self.A) >= sincro:
+            if E.sincronizacionCon(self.A) > sincro:
                 sincro = E.sincronizacionCon(self.A)
-        if(imprime):
-            print ('Sincronizadas en ' + str(tiempo)+ " segundos")    
-            print("La máquina externa más sincronizada, lo esta un " + str(sincro) + " porciento ") 
-        return (sincro, tiempo, cont)
+        return (sincro, time.time() - t_inicial, cont)
     
-    def ataqueGenetico(self, imprime = True, N = 10, M = 200):
+    def ataqueGenetico(self, N = 10, M = 200):
         Es = []
         for i in range(N):
             Es.append(arbolParidad(self.k, self.n, self.l))     
@@ -120,14 +111,11 @@ class Test():
                         Es.remove(E)
             cont += 1
         
-        tiempo, sincro = time.time() - t_inicial, 0
+        sincro = 0
         for E in Es:
             if E.sincronizacionCon(self.A) > sincro:
                 sincro = E.sincronizacionCon(self.A)
-        if(imprime):
-            print ('Sincronizadas en ' + str(tiempo)+ " segundos")    
-            print("La máquina externa más sincronizada, lo esta un " + str(sincro) + " porciento ") 
-        return (sincro, tiempo, cont)
+        return (sincro, time.time() - t_inicial, cont)
         
     def graficoSincronizacion(self):
         plt.plot(range(len(self.historial)), self.historial)
@@ -147,17 +135,19 @@ def prueba(n: int, ataque: Test.Ataques)-> int:
     for i in range(n):       
         t = Test(5, 10, 10)
         if ataque == Test.Ataques.FuerzaBruta:
-            (sincro, tiempo, cont) = t.fuerzaBruta(False)
+            (sincro, tiempo, cont) = t.fuerzaBruta()
         elif ataque == Test.Ataques.Geometrico:
-            (sincro, tiempo, cont) = t.ataqueGeometrico(False)
+            (sincro, tiempo, cont) = t.ataqueGeometrico()
         elif ataque == Test.Ataques.Genetico:
-            (sincro, tiempo, cont) = t.ataqueGenetico(False)
+            (sincro, tiempo, cont) = t.ataqueGenetico()
         else:
             sincro = 0
-            (tiempo, cont) = t.testBasico(False)
+            (tiempo, cont) = t.testBasico()
         resS.append(sincro)
         resT.append(tiempo)
         resC.append(cont)
+        if sincro == 100:
+            print('Roto por el atacante')
         
     plt.plot(range(len(resS)), resS)
     plt.xlabel('nº iteración prueba')
