@@ -91,11 +91,12 @@ class Test():
             if xA == xB:
                 EsCopia = list(Es)
                 for E in EsCopia:
+                    Es1 = int(xA == -1)
                     if xA == E(X):
                         ldI = len(E.getDatosIntermedios())
-                        if len(Es) + 2**ldI < M:
+                        if len(Es) + 2**(ldI-1) < M:
                             Es.remove(E)
-                            for i in range(2**ldI):
+                            for i in range(Es1, 2**ldI+Es1, 2):
                                 aux = i
                                 lista = []
                                 for _ in range(ldI):
