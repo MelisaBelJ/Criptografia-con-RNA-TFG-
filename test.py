@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy
 from statistics import mean
 from arbolParidad import arbolParidad, arbolParidadAtGeom
-from copy import copy
+import copy
 from enum import Enum
 
 class Test():    
@@ -20,6 +20,13 @@ class Test():
     
     def entradaAleatoria(self):
     	return numpy.random.randint(-self.l, self.l + 1, [self.k, self.n])
+    
+    def sincroMaxLista(self, Es):
+        sincro = 0
+        for E in Es:
+            if E.sincronizacionCon(self.A) > sincro:
+                sincro = E.sincronizacionCon(self.A)
+        return sincro
     
     def coordinaSalidas(self):
         X = self.entradaAleatoria()   
@@ -73,50 +80,43 @@ class Test():
                     E.propagacionHaciaAtras(xA)
             cont += 1
         
-        sincro = 0
-        for E in Es:
-            if E.sincronizacionCon(self.A) > sincro:
-                sincro = E.sincronizacionCon(self.A)
-        return (sincro, time.time() - t_inicial, cont)
+        return (self.sincroMaxLista(Es), time.time() - t_inicial, cont)
     
     def ataqueGenetico(self, N = 10, M = 200):
         Es = []
         for i in range(N):
-            Es.append(arbolParidad(self.k, self.n, self.l))     
+            Es.append(arbolParidad(self.k, self.n, self.l))    
         t_inicial = time.time()
         self.historial = []
         cont = 0
+        ldI = self.k
         while(self.porcentajeSincro != 100):
             X, xA, xB = self.coordinaSalidas()
             if xA == xB:
+                no1 = int(xA==-1)
                 EsCopia = list(Es)
                 for E in EsCopia:
-                    Es1 = int(xA == -1)
-                    if xA == E(X):
-                        ldI = len(E.getDatosIntermedios())
-                        if len(Es) + 2**(ldI-1) < M:
-                            Es.remove(E)
-                            for i in range(Es1, 2**ldI+Es1, 2):
-                                aux = i
-                                lista = []
-                                for _ in range(ldI):
-                                    lista.append((-1)**int(aux%2))
-                                    aux = aux//2
-                                Eaux  = copy(E)
+                    res = E(X)
+                    if len(Es) + 2**(ldI-1) < M:
+                        Es.remove(E)
+                        for i in range(2**ldI):
+                            aux = i
+                            lista = []
+                            for _ in range(ldI):
+                                lista.append((-1)**int(aux%2))
+                                aux = aux//2
+                            if (lista.count(-1)%2 == no1):
+                                Eaux  = copy.deepcopy(E)
                                 Eaux.cambiaDatosIntermedios(lista)
                                 Eaux.propagacionHaciaAtras(xA)
                                 Es.append(Eaux)
-                        else:
-                            E.propagacionHaciaAtras(xA) 
+                    elif xA == res:
+                        E.propagacionHaciaAtras(xA) 
                     elif len(Es)>1: 
                         Es.remove(E)
             cont += 1
         
-        sincro = 0
-        for E in Es:
-            if E.sincronizacionCon(self.A) > sincro:
-                sincro = E.sincronizacionCon(self.A)
-        return (sincro, time.time() - t_inicial, cont)
+        return (self.sincroMaxLista(Es), time.time() - t_inicial, cont)
         
     def graficoSincronizacion(self):
         plt.plot(range(len(self.historial)), self.historial)
@@ -165,4 +165,4 @@ def prueba(n: int, ataque: Test.Ataques)-> int:
     print("La media del tiempo para sincronizrse es: ", str(mean(resT)), "segundos")
     return resS
      
-prueba(100, Test.Ataques.Geometrico)
+prueba(1000, Test.Ataques.Genetico)
