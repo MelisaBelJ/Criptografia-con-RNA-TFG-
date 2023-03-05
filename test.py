@@ -74,7 +74,7 @@ class Test():
         
         return (self.sincroMaxLista(Es), time.time() - t_inicial, cont)
     
-    def ataqueGenetico(self, N = 5, M = 200):
+    def ataqueGenetico(self, N = 10, M = 200):
         self.historial, cont, t_inicial, Es = [], 0, time.time(), []
         for i in range(N):
             Es.append(arbolParidad(self.k, self.n, self.l, self.caos))  
@@ -152,4 +152,4 @@ def prueba(n: int, ataque: Test.Ataques, caos: bool)-> int:
     print("La media del tiempo para sincronizarse es: ", str(mean(resT)), " segundos")
     return resS
      
-prueba(1000, Test.Ataques.Genetico, True)
+#prueba(1, Test.Ataques.Geometrico, False)
