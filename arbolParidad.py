@@ -11,14 +11,11 @@ class arbolParidad(RNA):
         self.anadeCapa(CapaMult(reglaA))
         
     def inicializa(self, k, n , l, reglaA):
-        self.funCoste = Errores.Multiplicacion()
+        self.l, self.k, self.n = l, k, n
+        self.funCoste      = Errores.Multiplicacion()
         self.funSalidaNorm = Funciones.Identidad().funcion
         self.capas = []
-        self.k = k
-        self.n = n
-        self.l = l
-        self.tasaAprendizaje = 0
-        self.salida = 0
+        self.tasaAprendizaje, self.salida = 1, 0
         
     def cambiaReglaAprendizaje(self, reglaA):
         self.capas[1].cambiaReglaAprendizaje(reglaA)

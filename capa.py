@@ -39,14 +39,16 @@ class CapaConectada(AbstractCapa):
 
 #Capa en la que se conecta cada neurona con una unica neurona de la siguiente capa, cada una diferente. Usa como funcion activacion la de paridad (para TPM)
 class CapaUnoUno(AbstractCapa):
-    def __init__(self, numNeuronasEntrada, n, l):
-        self.l = l
+    def __init__(self, numNeuronasEntrada, n, l, caos = False):
+        self.l, self.caos = l, caos
         self.pesos = numpy.random.randint(-l, l + 1, [numNeuronasEntrada, n])
 
     #devuelve sigma(xW) con x = entrada, W = pesos
     def propagacionHaciaDelante(self, entrada):
         self.entrada = entrada
         self.salidaPreActivacion = numpy.sum(self.entrada * self.pesos, axis = 1) #xW
+        if self.caos:
+            self.salidaPreActivacion = Funciones.Logistica(self.salidaPreActivacion)
         self.salida = [1 if i == 0 else i for i in numpy.sign(self.salidaPreActivacion)] #sigma(xW)
         return self.salida
 
@@ -66,7 +68,7 @@ class CapaMult(AbstractCapa):
 
     def propagacionHaciaDelante(self, entrada):
         self.entrada = entrada
-        self.salida = numpy.prod(entrada)
+        self.salida  = numpy.prod(entrada)
         return self.salida
 
     def propagacionHaciaAtras(self, errorSalida, tasaAprendizaje):
@@ -83,12 +85,11 @@ class CapaMult(AbstractCapa):
 
 #Capa en la que se conecta cada neurona con una unica neurona de la siguiente capa, cada una diferente. Usa como funcion activacion la de paridad (para TPM)
 class CapaUnoUnoAtGeom(CapaUnoUno):
-
     def propagacionHaciaAtras(self, errorSalida, tasaAprendizaje):
         noCoincide, i = True, 0
         while noCoincide and i< len(errorSalida):
              noCoincide = errorSalida[i] == 0
-             i+=1
+             i += 1
         if noCoincide:
             iMin, salMin = 0, self.salidaPreActivacion[0]
             for i in range(1, len(self.pesos)):

@@ -2,9 +2,9 @@ import funciones
 
 class RNA:
     def __init__(self, funCoste = funciones.Errores.CuadraticoMedio(), funSalidaNorm = funciones.Funciones.Identidad().funcion):
-        self.funCoste = funCoste
+        self.funCoste      = funCoste
         self.funSalidaNorm = funSalidaNorm
-        self.capas = []
+        self.capas         = []
 
     def anadeCapa(self, capa):
         self.capas.append(capa)
@@ -19,7 +19,7 @@ class RNA:
         self.salida = salida
         return salida
     
-    def propagacionHaciaAtras(self, salidaEsperada, tasaAprendizaje = 0):
+    def propagacionHaciaAtras(self, salidaEsperada, tasaAprendizaje = 0.3):
         error = self.funCoste.derivada(salidaEsperada, self.salida) #nabla A =(dC/da1, ... dC/daj)
         for capa in reversed(self.capas):
             error = capa.propagacionHaciaAtras(error, tasaAprendizaje)
