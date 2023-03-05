@@ -74,7 +74,7 @@ class Test():
         
         return (self.sincroMaxLista(Es), time.time() - t_inicial, cont)
     
-    def ataqueGenetico(self, N = 10, M = 200):
+    def ataqueGenetico(self, N = 5, M = 200):
         self.historial, cont, t_inicial, Es = [], 0, time.time(), []
         for i in range(N):
             Es.append(arbolParidad(self.k, self.n, self.l, self.caos))  
@@ -108,8 +108,8 @@ class Test():
     def graficoSincronizacion(self):
         plt.plot(range(len(self.historial)), self.historial)
           
-        plt.xlabel('num comunicacion')
-        plt.ylabel('porcentaje sincronizacion')
+        plt.xlabel('Nº comunicacion')
+        plt.ylabel('% sincronizacion')
         
         plt.show()
         
@@ -118,10 +118,10 @@ class Test():
         Geometrico  = 'Ataque Geometrico'
         Genetico    = 'Ataque Genetico'  
      
-def prueba(n: int, ataque: Test.Ataques)-> int:        
+def prueba(n: int, ataque: Test.Ataques, caos: bool)-> int:        
     resS, resT, resC = [], [], []
     for i in range(n): 
-        t = Test(5, 10, 10, True)
+        t = Test(5, 10, 10, caos)
         if ataque == Test.Ataques.FuerzaBruta:
             (sincro, tiempo, cont) = t.fuerzaBruta()
         elif ataque == Test.Ataques.Geometrico:
@@ -136,8 +136,6 @@ def prueba(n: int, ataque: Test.Ataques)-> int:
         resC.append(cont)
         if sincro == 100:
             print('Roto por el atacante')
-        if i%10==0:
-            print(i)
         
     plt.plot(range(len(resS)), resS)
     plt.xlabel('Nº iteración prueba')
@@ -154,4 +152,4 @@ def prueba(n: int, ataque: Test.Ataques)-> int:
     print("La media del tiempo para sincronizarse es: ", str(mean(resT)), " segundos")
     return resS
      
-prueba(1000, Test.Ataques.FuerzaBruta)
+prueba(1000, Test.Ataques.Genetico, True)
