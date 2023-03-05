@@ -39,16 +39,19 @@ class CapaConectada(AbstractCapa):
 
 #Capa en la que se conecta cada neurona con una unica neurona de la siguiente capa, cada una diferente. Usa como funcion activacion la de paridad (para TPM)
 class CapaUnoUno(AbstractCapa):
-    def __init__(self, numNeuronasEntrada, n, l, caos = False):
+    def __init__(self, numNeuronasEntrada, n, l, caos = False, beta = 0.5):
         self.l, self.caos = l, caos
         self.pesos = numpy.random.randint(-l, l + 1, [numNeuronasEntrada, n])
+        self.funCaos = Funciones.Logistica()
+        self.funCaos.x = 1
+        self.beta = beta
 
     #devuelve sigma(xW) con x = entrada, W = pesos
     def propagacionHaciaDelante(self, entrada):
         self.entrada = entrada
         self.salidaPreActivacion = numpy.sum(self.entrada * self.pesos, axis = 1) #xW
         if self.caos:
-            self.salidaPreActivacion = Funciones.Logistica(self.salidaPreActivacion)
+            self.salidaPreActivacion = [(1-self.beta)*self.funCaos.siguiente() + (self.beta*x)/2 for x in  self.salidaPreActivacion]
         self.salida = [1 if i == 0 else i for i in numpy.sign(self.salidaPreActivacion)] #sigma(xW)
         return self.salida
 

@@ -5,10 +5,11 @@ from funciones import reglaAprendizaje, Funciones, Errores
 import hashlib
 
 class arbolParidad(RNA):
-    def __init__(self, k, n , l, reglaA = reglaAprendizaje.AntiHebbian()):
+    def __init__(self, k, n , l, caos = False, reglaA = reglaAprendizaje.AntiHebbian()):
         self.inicializa(k, n , l, reglaA)
-        self.anadeCapa(CapaUnoUno(k, n, l))
+        self.anadeCapa(CapaUnoUno(k, n, l, caos))
         self.anadeCapa(CapaMult(reglaA))
+        self.caos = caos
         
     def inicializa(self, k, n , l, reglaA):
         self.l, self.k, self.n = l, k, n
@@ -39,7 +40,7 @@ class arbolParidad(RNA):
         self.capas[0].salida = nuevosDatos
     
 class arbolParidadAtGeom(arbolParidad):
-    def __init__(self, k, n , l, reglaA = reglaAprendizaje.AntiHebbian()):
+    def __init__(self, k, n , l, caos = False, reglaA = reglaAprendizaje.AntiHebbian()):
         self.inicializa(k, n , l, reglaA)
-        self.anadeCapa(CapaUnoUnoAtGeom(k, n, l))
+        self.anadeCapa(CapaUnoUnoAtGeom(k, n, l, caos))
         self.anadeCapa(CapaMult(reglaA))

@@ -67,7 +67,7 @@ class Redondeo(AbstractFuncion):
         self.digitos = digitos
 
 class Logistica(AbstractFuncion):    
-    r = 1    
+    r = 3.95
     def funcion(self, x):
         self.x = self.r*x*(1-x)
         return self.x

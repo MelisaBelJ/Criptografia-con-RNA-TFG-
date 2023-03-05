@@ -7,9 +7,10 @@ import copy
 from enum import Enum
 
 class Test():    
-    def __init__(self, k, n, l):
+    def __init__(self, k, n, l, caos = False):
         self.l, self.k, self.n = l, k, n
-        self.A, self.B = arbolParidad(k, n, l), arbolParidad(k, n, l)
+        self.caos = caos
+        self.A, self.B = arbolParidad(k, n, l, caos), arbolParidad(k, n, l, caos)
         self.sincronizacion()
         
     def sincronizacion(self):
@@ -48,7 +49,7 @@ class Test():
         return (0, time.time() - t_inicial, cont)
         
     def fuerzaBruta(self):
-        self.historial, cont, t_inicial, E = [], 0, time.time(), arbolParidad(self.k, self.n, self.l)  
+        self.historial, cont, t_inicial, E = [], 0, time.time(), arbolParidad(self.k, self.n, self.l, self.caos)  
         
         while(self.porcentajeSincro != 100):
             X, xA, xB = self.coordinaSalidas()            
@@ -61,7 +62,7 @@ class Test():
     def ataqueGeometrico(self, N = 10):
         self.historial, cont, t_inicial, Es = [], 0, time.time(), []
         for i in range(N):
-            Es.append(arbolParidadAtGeom(self.k, self.n, self.l))   
+            Es.append(arbolParidadAtGeom(self.k, self.n, self.l, self.caos))   
         
         while(self.porcentajeSincro != 100):
             X, xA, xB = self.coordinaSalidas()            
@@ -76,7 +77,7 @@ class Test():
     def ataqueGenetico(self, N = 10, M = 200):
         self.historial, cont, t_inicial, Es = [], 0, time.time(), []
         for i in range(N):
-            Es.append(arbolParidad(self.k, self.n, self.l))  
+            Es.append(arbolParidad(self.k, self.n, self.l, self.caos))  
             
         while(self.porcentajeSincro != 100):
             X, xA, xB = self.coordinaSalidas()
@@ -120,7 +121,7 @@ class Test():
 def prueba(n: int, ataque: Test.Ataques)-> int:        
     resS, resT, resC = [], [], []
     for i in range(n): 
-        t = Test(5, 10, 10)
+        t = Test(5, 10, 10, True)
         if ataque == Test.Ataques.FuerzaBruta:
             (sincro, tiempo, cont) = t.fuerzaBruta()
         elif ataque == Test.Ataques.Geometrico:
@@ -128,12 +129,15 @@ def prueba(n: int, ataque: Test.Ataques)-> int:
         elif ataque == Test.Ataques.Genetico:
             (sincro, tiempo, cont) = t.ataqueGenetico()
         else:
+            print('b')
             (sincro, tiempo, cont) = t.testBasico()
         resS.append(sincro)
         resT.append(tiempo)
         resC.append(cont)
         if sincro == 100:
             print('Roto por el atacante')
+        if i%10==0:
+            print(i)
         
     plt.plot(range(len(resS)), resS)
     plt.xlabel('Nº iteración prueba')
@@ -147,7 +151,7 @@ def prueba(n: int, ataque: Test.Ataques)-> int:
     
     print("La media del porcentaje de sincronizacion es: ", str(mean(resS)), " porciento")
     print("La media del numero de interacciones es: ", str(mean(resC)))
-    print("La media del tiempo para sincronizrse es: ", str(mean(resT)), " segundos")
+    print("La media del tiempo para sincronizarse es: ", str(mean(resT)), " segundos")
     return resS
      
-prueba(1000, Test.Ataques.Geometrico)
+prueba(1000, Test.Ataques.FuerzaBruta)
